@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#edf0e8">
+  <meta name="description" content="Campus Atlas 校园三维漫游：自由探索、自动导览与 3D Gaussian Splatting 场景展示。">
+  <title>Campus Atlas · 校园漫游</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23285044'/%3E%3Cpath d='M10 27V16l10-6 10 6v11M15 27V18m10 9V18M8 29h24' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/addons/","@sparkjsdev/spark":"./vendor/spark.module.js"}}</script>
+</head>
+<body>
+  <div id="viewport" aria-label="校园三维场景，拖动旋转，滚轮缩放"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Campus Atlas 首页"><span class="brand-mark"><svg viewBox="0 0 32 32"><path d="M5 25V12l11-6 11 6v13M10 24V14m6 10V12m6 12V14M3 27h26"/></svg></span><span>CAMPUS<span class="brand-light"> ATLAS</span><small>校园 · 数字空间</small></span></a>
+    <div class="top-center"><span class="live-dot"></span> 在线三维展厅 <span class="top-divider"></span><span id="assetBadge">示意校园 · 非实采模型</span></div>
+    <div class="top-actions"><button id="helpButton" class="text-button"><span class="icon">?</span><span class="desktop-label">操作指南</span></button><button id="openModel" class="outline-button"><span>＋</span> 加载场景</button></div>
+  </header>
+  <aside class="sidebar" aria-label="场景导航">
+    <div class="eyebrow">EXPLORE THE CAMPUS <span>↗</span></div>
+    <h1>每一步，<br>重逢校园。</h1>
+    <p class="intro">让熟悉的风景，在数字空间中延续。<br>选择一处坐标，开始你的探索。</p>
+    <div class="section-title">校园坐标 <span id="poiCount">04 / PLACES</span></div>
+    <nav id="places"></nav>
+    <div class="sidebar-note"><span class="tiny-orbit">◎</span><div><strong>换个角度，发现更多</strong><p>拖动旋转视角 · 滚轮拉近风景</p></div></div>
+    <button id="openRoute" class="route-edit"><span>⌘</span><span>编排我的导览</span><span>↗</span></button>
+  </aside>
+  <main class="stage-ui">
+    <div class="scene-topline"><span id="sceneName">CAMPUS / 全景总览</span><span id="renderStatus"><i></i> 实时三维</span></div>
+    <div id="labels" aria-hidden="true"></div>
+    <div class="right-tools" aria-label="视图工具">
+      <button id="resetView" class="tool-button" title="回到初始视角" aria-label="回到初始视角">⌂</button>
+      <button id="togglePath" class="tool-button active" title="显示 / 隐藏导览路线" aria-label="显示导览路线" aria-pressed="true">⌁</button>
+      <span></span><button id="fullscreen" class="tool-button" title="全屏展示" aria-label="全屏展示">⛶</button>
+    </div>
+    <div class="view-caption"><div class="eyebrow" id="captionTag">A NEW PERSPECTIVE</div><h2 id="captionTitle">把校园，装进每一次抵达。</h2><p id="captionText">从一段漫游开始，重新认识这片风景。</p></div>
+    <div class="mode-switch" role="group" aria-label="相机控制方式"><button id="orbitMode" class="selected">◎ 轨道探索</button><button id="flyMode">↗ 自由漫游</button></div>
+    <div class="map-card"><div class="map-heading"><span>空间索引</span><span>N ↑</span></div><canvas id="minimap" width="440" height="280" aria-label="场景俯视图与相机位置"></canvas><div class="map-footer"><span class="live-dot"></span><span id="mapCaption">示意校园 · 导览轨迹</span><span id="fps">— FPS</span></div></div>
+    <div id="movePad" class="move-pad" hidden><button data-move="KeyW" aria-label="前进">↑</button><div><button data-move="KeyA" aria-label="左移">←</button><button data-move="KeyS" aria-label="后退">↓</button><button data-move="KeyD" aria-label="右移">→</button></div></div>
+  </main>
+  <section class="tour-dock" aria-label="自动导览播放器">
+    <button id="playTour" class="play-button" aria-label="播放自动导览"><svg viewBox="0 0 24 24"><path d="m9 5 10 7-10 7z"/></svg></button>
+    <div class="tour-info"><strong id="tourTitle">校园印象 · 精选导览</strong><span id="tourSubtitle">4 个镜头 · 60 秒探索</span></div>
+    <div class="timeline"><div class="timeline-meta"><span id="timeCurrent">00:00</span><span id="tourState">准备出发</span><span id="timeTotal">01:00</span></div><input id="progress" type="range" min="0" max="1000" value="0" aria-label="导览播放进度"><div id="timelineMarkers" aria-hidden="true"></div></div>
+    <button id="restartTour" class="small-button" aria-label="从头播放" title="从头播放">↺</button>
+    <select id="speed" aria-label="导览速度"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select>
+    <div class="dock-divider"></div><button id="tourRouteButton" class="text-button">路线 <span>↗</span></button>
+  </section>
+  <footer class="footer"><span>校园空间的另一种打开方式</span><span id="controlHint">左键旋转 / 右键平移 / 滚轮缩放</span><span>POWERED BY WEBGL <span class="live-dot"></span></span></footer>
+
+  <dialog id="settingsDialog" class="settings-dialog">
+    <div class="dialog-heading"><div><div class="eyebrow">YOUR DIGITAL CAMPUS</div><h2>定义你的校园体验</h2></div><button class="close-dialog" aria-label="关闭设置">×</button></div>
+    <div class="tabs"><button data-tab="model" class="selected">模型接入</button><button data-tab="route">导览路线</button></div>
+    <section id="modelPanel" class="tab-panel">
+      <p class="panel-intro">载入训练后的高斯模型，沿你自己的镜头探索校园。</p>
+      <label class="upload-zone" for="modelFile"><span class="upload-icon">↥</span><strong>选择本地 3DGS 模型</strong><span>PLY / SPLAT / SPZ / KSPLAT / SOG / RAD</span><small>仅在当前浏览器读取，不上传文件</small><input id="modelFile" type="file" accept=".ply,.splat,.spz,.ksplat,.sog,.rad" hidden></label>
+      <div class="or-divider"><span></span>或通过链接接入<span></span></div>
+      <label class="field-label" for="modelUrl">模型资源地址</label><div class="input-with-button"><input id="modelUrl" type="url" placeholder="https://…/campus.spz"><button id="loadUrl" class="green-button">加载</button></div>
+      <p class="field-note">链接需允许跨域访问。正式展示时，将模型部署到静态资源服务器。</p>
+      <label class="field-label" for="modelUp">模型坐标方向</label><select id="modelUp"><option value="y">Y 轴向上</option><option value="z">Z 轴向上</option><option value="negative-y">Y 轴向下</option></select>
+      <div id="loadStatus" class="status-box" role="status">当前为程序生成的校园示意场景，尚未接入实采模型。</div>
+      <button id="restoreDemo" class="outline-button full-width">返回校园示意场景</button>
+      <details class="integration-note"><summary>如何接入正式展示？</summary><p>修改 scene-config.json 的 modelUrl、upAxis 和 id，然后部署模型资源。导入对应场景的路线 JSON，或在场景中逐个添加镜头。当前框架提供自由飞行，尚未加入地面与墙体碰撞。</p></details>
+    </section>
+    <section id="routePanel" class="tab-panel" hidden>
+      <p class="panel-intro">调整到喜欢的视角，记录一个镜头。按顺序连接，生成一段平滑导览。</p>
+      <div class="route-summary"><div><strong id="keyframeCount">4</strong><span>相机关键帧</span></div><div><strong id="routeLength">—</strong><span>场景单位</span></div><button id="addKeyframe" class="green-button">＋ 记录当前视角</button></div>
+      <div id="keyframeList" class="keyframe-list"></div>
+      <label class="field-label" for="duration">导览时长 <span id="durationValue">60 秒</span></label><input id="duration" type="range" min="10" max="300" step="5" value="60">
+      <div class="route-options"><label><input id="loopTour" type="checkbox"> 循环播放</label><span>路线自动保存于当前浏览器</span></div>
+      <div class="route-actions"><button id="exportRoute" class="green-button">导出路线 JSON ↓</button><label class="outline-button" for="routeFile">导入路线 ↑<input id="routeFile" type="file" accept=".json,application/json" hidden></label></div>
+      <button id="resetRoute" class="text-button full-width">恢复当前场景的初始路线</button>
+      <div class="video-export-box"><div><strong>将这段旅程，保存为视频。</strong><p>沿当前路线实时录制三维画布，不含网页按钮、标注或声音。录制期间请保持页面在前台。</p></div><button id="exportVideo" class="green-button full-width">生成导览视频 ↗</button><p id="videoExportStatus" class="field-note" role="status">目标采集帧率 30 FPS，输出当前画布分辨率；实际流畅度取决于设备性能。格式由浏览器支持决定。</p><video id="videoPreview" controls playsinline preload="metadata" aria-label="生成的导览视频预览" hidden></video><a id="videoDownload" class="outline-button full-width" hidden>下载视频 ↓</a></div>
+      <p class="field-note">导览使用平滑位置曲线和四元数旋转插值。真实模型加载后需重新编排路线；轨迹线仅用于预览，不代表可通行区域。</p>
+    </section>
+  </dialog>
+  <dialog id="recordingDialog" class="recording-dialog"><div class="eyebrow">RECORD YOUR JOURNEY</div><h2>正在生成导览视频</h2><p>相机将沿设定路线移动。视频只记录三维画布，请保持当前页面在前台。</p><progress id="recordingProgress" max="1" value="0" aria-label="视频录制进度"></progress><div class="recording-meta"><span id="recordingTime">00:00 / 01:00</span><span id="recordingFormat">WEBM</span></div><button id="cancelRecording" class="outline-button full-width">取消生成</button></dialog>
+  <dialog id="helpDialog" class="help-dialog"><button class="close-dialog" aria-label="关闭指南">×</button><div class="eyebrow">A LITTLE GUIDE</div><h2>出发之前，了解一点。</h2><div class="help-row"><span>◎</span><div><strong>轨道探索</strong><p>拖动旋转，右键平移，滚轮或双指缩放。</p></div></div><div class="help-row"><span>↗</span><div><strong>自由漫游</strong><p>拖动改变朝向，WASD 移动，Q / E 升降，Shift 加速。触屏可使用方向按钮。当前为自由飞行，无碰撞。</p></div></div><div class="help-row"><span>▶</span><div><strong>自动导览</strong><p>点击播放，或拖动时间轴。手动操作会暂停导览。路线面板可记录、排序和导出镜头。</p></div></div><button id="startExplore" class="green-button full-width">开始探索 ↗</button></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="fatalError" hidden><h2>三维视图暂时无法启动</h2><p>请使用支持 WebGL2 的现代浏览器并启用硬件加速，然后刷新页面。</p><button onclick="location.reload()">重新加载</button></div>
+  <script type="module" src="./app.js"></script>
+</body></html>

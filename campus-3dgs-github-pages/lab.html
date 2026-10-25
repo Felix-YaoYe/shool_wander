@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f4f5f0"><title>实验室实景漫游 · Spatial Atlas</title><meta name="description" content="由真实实验室 3DGS 模型生成的三条导览路线，支持视频观看、预设路线漫游与自由探索。"><link rel="stylesheet" href="./lab.css"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%23265046'/%3E%3Cpath d='M10 13l10-5 10 5v14l-10 5-10-5zM10 13l10 6 10-6M20 19v13' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E"><script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/addons/","@sparkjsdev/spark":"./vendor/spark.module.js"}}</script></head>
+<body data-scene="laboratory" data-bundle="./assets/routes.json" data-asset-base="./assets">
+<header class="site-header"><a class="brand" href="./lab.html"><span class="brand-symbol">⬡</span><span>SPATIAL <b>ATLAS</b><small>真实空间 · 数字抵达</small></span></a><nav aria-label="场景页面"><a class="selected" href="./lab.html">实验室 <span>01</span></a><a href="./campus.html">校园 <span>02</span></a></nav><div class="header-actions"><a id="editRoute" class="subtle-button" href="./studio.html">编辑镜头 ↗</a><button id="help" class="subtle-button">操作指南 <span>↗</span></button></div></header>
+<div class="workspace">
+<aside class="sidebar"><div class="eyebrow">LABORATORY / 01</div><h1>走进实验室。</h1><p class="description">从实采模型出发，沿着精心选择的镜头，<br>重新发现熟悉的工作空间。</p><div class="asset-tags"><span><i></i> 真实 3DGS</span><span>清理版模型</span></div>
+<div class="section-label">选择一段旅程 <span>03 ROUTES</span></div><div id="routes" class="routes" aria-label="选择导览路线"></div>
+<div class="route-note"><span>⌁</span><p>视频与交互模式使用同一条相机路线。<br>在自由探索中，可随时接管视角。</p></div>
+<details class="cleaning-info"><summary>模型清理记录 <span>↗</span></summary><p>原模型 972,651 个高斯；清理后 <strong id="gaussianCount">882,825</strong> 个。移除 89,826 个低透明度、低支撑离群或尺寸异常的高斯。保留原有球谐参数。</p><p>原始采集中的局部重影、模糊和缺失仍可见，本次未重新训练或补造内容。</p><a href="./assets/cleaning.json" download>下载清理记录 ↓</a></details>
+<a class="campus-entry" href="./campus.html"><span>下一站 · 校园</span><small>进入校园实景漫游</small><b>↗</b></a></aside>
+<main>
+<div class="view-header"><div><span class="live-dot"></span><span id="viewLabel">预渲染视频</span><span class="view-divider"></span><span id="routeLabel">空间总览</span></div><div class="mode-tabs" role="group" aria-label="展示方式"><button id="videoMode" class="selected">▶ 视频导览</button><button id="exploreMode">◎ 自由探索</button></div></div>
+<section class="viewer" id="viewer" aria-label="实验室场景展示">
+  <img id="fallbackImage" class="scene-media" src="./assets/equipment-poster.jpg" alt="实际实验室高斯模型渲染画面" hidden>
+  <video id="tourVideo" class="scene-media" src="./assets/laboratory-equipment.mp4" poster="./assets/equipment-poster.jpg" controls muted autoplay loop playsinline preload="metadata" aria-label="实验室导览视频"></video>
+  <div id="renderCanvas" hidden></div>
+  <div id="modelLoading" class="model-loading" role="status" hidden><span class="spinner"></span><strong id="loadingTitle">正在载入实验室模型</strong><p id="loadingText">准备高斯渲染器…</p></div>
+  <div id="interactiveError" class="interactive-error" role="status" hidden><strong>当前浏览器未能启动三维渲染</strong><p id="interactiveErrorText">可继续观看实际渲染的视频，或选择下方镜头查看对应视角。自由移动需要 WebGL2 和硬件加速。</p><button id="backToVideo">返回视频导览 ↗</button></div>
+  <div id="sceneTools" class="scene-tools" hidden><button id="homeView" aria-label="回到路线起点" title="回到路线起点">⌂</button><button id="pathToggle" aria-label="显示相机路线" aria-pressed="false" title="显示相机路线">⌁</button><button id="viewFullscreen" aria-label="全屏场景" title="全屏场景">⛶</button></div>
+  <div id="cameraMode" class="camera-mode" hidden><button id="orbitControl" class="selected">轨道查看</button><button id="flyControl">WASD 漫游</button></div>
+  <div id="movementPad" class="movement-pad" hidden><button data-key="KeyW" aria-label="前进">↑</button><div><button data-key="KeyA" aria-label="左移">←</button><button data-key="KeyS" aria-label="后退">↓</button><button data-key="KeyD" aria-label="右移">→</button></div></div>
+  <div class="scene-watermark">LABORATORY <span>/</span> CAPTURED IN 3D</div>
+</section>
+<section class="playback-bar" aria-label="路线播放控制"><button id="playRoute" class="play-button" aria-label="播放导览">▶</button><div class="playback-title"><strong id="title">空间总览</strong><span id="playbackCaption">5 个镜头 · 24 秒</span></div><div class="timeline"><input id="seek" type="range" min="0" max="1000" value="0" aria-label="播放进度"><div><span id="elapsed">00:00</span><span id="total">00:24</span></div></div><select id="speed" aria-label="播放速度"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select><a id="downloadVideo" href="./assets/laboratory-overview.mp4" download>下载视频 ↓</a></section>
+<section class="keyframe-section"><div class="section-label">直接抵达一个视角 <span id="keyframeHint">选择后跳转到对应视频镜头</span></div><div id="keyframes" class="keyframes" aria-label="预设相机视角"></div></section>
+<footer class="content-footer"><span id="status">实际 GS 离线渲染 · 1280 × 720 / 24 FPS</span><div><a id="downloadRoute" href="./assets/routes.json" download>下载轨迹 JSON ↗</a><a id="downloadModel" href="./assets/laboratory-cleaned.spz" download>下载模型 SPZ ↗</a></div></footer>
+</main></div>
+<dialog id="helpDialog"><button id="closeHelp" class="close" aria-label="关闭指南">×</button><div class="eyebrow">MAKE YOURSELF AT HOME</div><h2>沿路线观看，也可以自己走。</h2><p><strong>视频导览</strong><br>左侧选择路线，播放实际高斯模型预渲染的 MP4。下方镜头卡片可以直接跳到对应时刻。</p><p><strong>自由探索</strong><br>模型载入后，点击播放可沿路线移动；拖动场景会暂停并交还相机控制。轨道模式支持拖动旋转、右键平移、滚轮缩放。</p><p><strong>WASD 漫游</strong><br>拖动转向，WASD 移动，Q / E 升降，Shift 加速。当前为自由飞行，未加入墙体和地面碰撞。</p><p><strong>模型质量</strong><br>展示使用清理后的上传模型。删除了部分离群高斯，原始重建中的局部重影和模糊仍可能出现。</p><button id="begin" class="green-button">开始探索 ↗</button></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script type="module" src="./lab.js"></script></body></html>
