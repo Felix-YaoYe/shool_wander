@@ -1,0 +1,252 @@
+{
+  "version": 1,
+  "sceneId": "school-cleaned-v1",
+  "modelUrl": "./assets/school/school-cleaned.spz",
+  "modelQuaternion": [
+    -0.7071067811865476,
+    0,
+    0,
+    0.7071067811865476
+  ],
+  "defaultRoute": "courtyard",
+  "cameraFar": 1500,
+  "orbitMaxDistance": 500,
+  "moveSpeed": 5,
+  "focusDistance": 15,
+  "pathDashSize": 1,
+  "pathGapSize": 0.5,
+  "routes": [
+    {
+      "id": "courtyard",
+      "name": "庭院与高楼",
+      "description": "从地面缓缓前行，观看庭院、树木和主楼。",
+      "duration": 18,
+      "videoUrl": "./assets/school/school-courtyard.mp4",
+      "posterUrl": "./assets/school/courtyard-poster.jpg",
+      "routeUrl": "./assets/school/school-courtyard-route.json",
+      "thumbnailUrls": [
+        "./assets/school/courtyard-0.jpg",
+        "./assets/school/courtyard-1.jpg",
+        "./assets/school/courtyard-2.jpg",
+        "./assets/school/courtyard-3.jpg"
+      ],
+      "keyframes": [
+        {
+          "name": "庭院初见",
+          "position": [
+            12,
+            3.552713678800501e-15,
+            18.000000000000004
+          ],
+          "quaternion": [
+            0.11969843853024804,
+            0.30158077558511,
+            -0.03819465491854256,
+            0.9451256466452264
+          ],
+          "fov": 65
+        },
+        {
+          "name": "沿路前行",
+          "position": [
+            16,
+            1.7763568394002505e-15,
+            14.000000000000002
+          ],
+          "quaternion": [
+            0.11862420810020262,
+            0.3583429892089338,
+            -0.04596063672471499,
+            0.9248817325524731
+          ],
+          "fov": 65
+        },
+        {
+          "name": "草坪与主楼",
+          "position": [
+            20,
+            1.7763568394002505e-15,
+            10.000000000000002
+          ],
+          "quaternion": [
+            0.11537065904689148,
+            0.41447392176164255,
+            -0.05306299512409241,
+            0.9011577540914079
+          ],
+          "fov": 65
+        },
+        {
+          "name": "树影停驻",
+          "position": [
+            24,
+            8.881784197001252e-16,
+            6.000000000000001
+          ],
+          "quaternion": [
+            0.11019907357054891,
+            0.46815771309541754,
+            -0.05897675437538159,
+            0.8747606885867742
+          ],
+          "fov": 65
+        }
+      ]
+    },
+    {
+      "id": "avenue",
+      "name": "林荫步道",
+      "description": "沿庭院边缘平移，观察树荫下的步道与低层建筑。",
+      "duration": 16,
+      "videoUrl": "./assets/school/school-avenue.mp4",
+      "posterUrl": "./assets/school/avenue-poster.jpg",
+      "routeUrl": "./assets/school/school-avenue-route.json",
+      "thumbnailUrls": [
+        "./assets/school/avenue-0.jpg",
+        "./assets/school/avenue-1.jpg",
+        "./assets/school/avenue-2.jpg",
+        "./assets/school/avenue-3.jpg"
+      ],
+      "keyframes": [
+        {
+          "name": "步道入口",
+          "position": [
+            16,
+            1.7763568394002505e-15,
+            14.000000000000002
+          ],
+          "quaternion": [
+            0.020535092556478052,
+            0.5503244483922979,
+            -0.013540761135516787,
+            0.8345884969631925
+          ],
+          "fov": 65
+        },
+        {
+          "name": "树下转望",
+          "position": [
+            18,
+            1.7763568394002505e-15,
+            12.000000000000002
+          ],
+          "quaternion": [
+            0.026321639617456042,
+            0.5373114704432015,
+            -0.016780752403719495,
+            0.8428060045863333
+          ],
+          "fov": 65
+        },
+        {
+          "name": "庭院侧览",
+          "position": [
+            20,
+            1.7763568394002505e-15,
+            10.000000000000002
+          ],
+          "quaternion": [
+            0.031148691606249567,
+            0.49773929269750283,
+            -0.017890884353393366,
+            0.8665825245025783
+          ],
+          "fov": 65
+        },
+        {
+          "name": "林荫回望",
+          "position": [
+            22,
+            1.7763568394002505e-15,
+            8.000000000000002
+          ],
+          "quaternion": [
+            0.039024744802326164,
+            0.4877415815508015,
+            -0.021831925205154458,
+            0.8718420648037538
+          ],
+          "fov": 65
+        }
+      ]
+    },
+    {
+      "id": "facade",
+      "name": "旋梯与连廊",
+      "description": "近距离观看旋转楼梯、架空空间和建筑连廊。",
+      "duration": 14,
+      "videoUrl": "./assets/school/school-facade.mp4",
+      "posterUrl": "./assets/school/facade-poster.jpg",
+      "routeUrl": "./assets/school/school-facade-route.json",
+      "thumbnailUrls": [
+        "./assets/school/facade-0.jpg",
+        "./assets/school/facade-1.jpg",
+        "./assets/school/facade-2.jpg",
+        "./assets/school/facade-3.jpg"
+      ],
+      "keyframes": [
+        {
+          "name": "连廊初见",
+          "position": [
+            23,
+            1.7763568394002505e-15,
+            12.000000000000002
+          ],
+          "quaternion": [
+            -0.02334250334070637,
+            0.9682129186711852,
+            -0.09888043091624811,
+            -0.22856406549987507
+          ],
+          "fov": 65
+        },
+        {
+          "name": "旋梯侧望",
+          "position": [
+            24,
+            1.7763568394002505e-15,
+            11.000000000000002
+          ],
+          "quaternion": [
+            -0.014391950948951984,
+            0.9804758829034629,
+            -0.07852264771113368,
+            -0.17970561646479274
+          ],
+          "fov": 65
+        },
+        {
+          "name": "楼梯近览",
+          "position": [
+            25,
+            1.7763568394002505e-15,
+            10.000000000000002
+          ],
+          "quaternion": [
+            -0.012546679157579786,
+            0.9840548086910277,
+            -0.07731612068205414,
+            -0.15969011183182208
+          ],
+          "fov": 65
+        },
+        {
+          "name": "连廊停驻",
+          "position": [
+            26,
+            1.7763568394002505e-15,
+            9.000000000000002
+          ],
+          "quaternion": [
+            -0.009624544451606055,
+            0.9885427521406981,
+            -0.07186889319420715,
+            -0.13238375098641442
+          ],
+          "fov": 65
+        }
+      ]
+    }
+  ],
+  "cleaningReport": "./assets/school/cleaning.json"
+}

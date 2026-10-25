@@ -1,0 +1,51 @@
+{
+  "source": "school_official_full(1).ply",
+  "originalCount": 413251,
+  "retainedCount": 344196,
+  "removedCount": 69055,
+  "removedPercent": 16.71,
+  "removalCounts": {
+    "invalid": 0,
+    "opacity_below_0_01": 64436,
+    "large_low_opacity": 614,
+    "extreme_bounds": 108,
+    "isolated_low_support": 3897
+  },
+  "thresholds": {
+    "minOpacity": 0.01,
+    "largeScale": 8,
+    "largeMaxOpacity": 0.25,
+    "neighborIndex": 8,
+    "isolationDistance": 4,
+    "isolationMaxOpacity": 0.3,
+    "boundQuantiles": [
+      0.001,
+      0.999
+    ],
+    "boundPadding": 0.1
+  },
+  "upAxis": "z",
+  "modelQuaternion": [
+    -0.7071067811865475,
+    0,
+    0,
+    0.7071067811865476
+  ],
+  "bounds": [
+    [
+      -197.91372680664062,
+      -222.61163330078125,
+      -40.02690124511719
+    ],
+    [
+      211.44003295898438,
+      161.06398010253906,
+      138.06088256835938
+    ]
+  ],
+  "notes": [
+    "Original file preserved; retained Gaussians keep original SH3, scale, opacity and quaternion parameters.",
+    "Conservative pruning only; no retraining, invented geometry or texture repair.",
+    "Coordinates remain in the source reference frame; real-world metric scale has not been independently calibrated."
+  ]
+}
